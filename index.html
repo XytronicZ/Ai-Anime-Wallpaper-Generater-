@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Anime Wallpaper Generator</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.sh/@google/genai@^0.14.0"
+        }
+      }
+    </script>
+    <script type="module" src="index.tsx"></script>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <h1>AI Anime Wallpaper</h1>
+            <button id="theme-toggle" class="icon-button" aria-label="Toggle theme">
+                <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="generator-section" aria-labelledby="generator-heading">
+            <h2 id="generator-heading" class="sr-only">Wallpaper Generator</h2>
+            <form id="prompt-form">
+                <div class="prompt-container">
+                    <textarea id="prompt-input" placeholder="An epic anime warrior under the moonlight..." required></textarea>
+                    <button id="generate-btn" type="submit">
+                        <span class="btn-text">Generate</span>
+                        <div class="spinner" style="display: none;"></div>
+                    </button>
+                </div>
+            </form>
+            <div class="options-container">
+                <div id="aspect-ratio-selector" role="radiogroup" aria-labelledby="aspect-ratio-label">
+                    <span id="aspect-ratio-label" class="options-label">Aspect Ratio:</span>
+                    <button class="aspect-ratio-btn active" role="radio" aria-checked="true" data-ratio="9:16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2" ry="2"></rect></svg>
+                        Portrait
+                    </button>
+                    <button class="aspect-ratio-btn" role="radio" aria-checked="false" data-ratio="1:1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                        Square
+                    </button>
+                    <button class="aspect-ratio-btn" role="radio" aria-checked="false" data-ratio="16:9">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="10" rx="2" ry="2"></rect></svg>
+                        Landscape
+                    </button>
+                </div>
+            </div>
+            <div id="demo-prompts" class="demo-prompts-container"></div>
+        </section>
+
+        <section id="feeds-section">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="my-wallpapers">My Wallpapers</button>
+                <button class="tab-btn" data-tab="generations">Generations</button>
+                <button class="tab-btn" data-tab="demo-history">Demo History</button>
+            </div>
+            <div id="my-wallpapers-panel" class="tab-panel active">
+                <div id="history-grid" class="wallpaper-grid"></div>
+                <p id="history-placeholder">Your generated wallpapers will appear here.</p>
+            </div>
+            <div id="generations-panel" class="tab-panel">
+                <div id="generations-grid" class="wallpaper-grid"></div>
+                 <p id="generations-placeholder">All user and demo generated wallpapers will appear here.</p>
+            </div>
+            <div id="demo-history-panel" class="tab-panel">
+                <div id="demo-history-grid" class="wallpaper-grid"></div>
+                 <p id="demo-history-placeholder">All auto-generated demo wallpapers will appear here.</p>
+            </div>
+        </section>
+
+        <section id="live-demo-section" aria-labelledby="demo-heading">
+            <h2 id="demo-heading">Fresh AI Wallpapers</h2>
+            <div id="demo-grid" class="wallpaper-grid"></div>
+        </section>
+    </main>
+
+    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-content">
+            <button id="modal-close" class="icon-button modal-close-btn" aria-label="Close image view">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <img id="modal-image" src="" alt="Full-size wallpaper">
+            <div class="modal-actions">
+                <button id="modal-download" class="action-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Download
+                </button>
+                <button id="modal-share" class="action-button">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                    Share
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="error-toast" class="toast" role="alert" aria-live="assertive"></div>
+
+</body>
+</html>

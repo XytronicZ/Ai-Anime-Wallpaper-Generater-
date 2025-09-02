@@ -1,0 +1,5 @@
+{
+  "name": "AI Anime Wallpaper Generator",
+  "description": "Generate and browse stunning anime-style wallpapers using AI. Features a prompt-based generator, wallpaper history, and auto-refreshing demo wallpapers.",
+  "requestFramePermissions": []
+}
